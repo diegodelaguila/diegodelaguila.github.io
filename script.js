@@ -75,6 +75,12 @@ const stills = [...document.querySelectorAll('button.v-frame')];
 const players = new Map();
 
 stills.forEach(still => still.addEventListener('click', () => {
+  // Instagram won't embed this post (its embed reports the media as broken),
+  // so the still opens the reel on Instagram instead
+  if (still.dataset.instagram) {
+    window.open(`https://www.instagram.com/p/${still.dataset.instagram}/`, '_blank', 'noopener');
+    return;
+  }
   const player = document.createElement('div');
   const title = still.getAttribute('aria-label').replace('Play ', '');
   if (still.dataset.instagram) {
