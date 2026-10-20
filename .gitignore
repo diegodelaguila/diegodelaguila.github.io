@@ -1,0 +1,41 @@
+# Full-size originals (~1 GB) — the site uses the web copies in assets/img
+assets/photos/
+# Original iPhone portrait: HEIC, and it contains GPS location data
+assets/profile.HEIC
+
+.DS_Store
+
+# PDFs stay local: design source PDFs are shown as images, and the resume
+# PDF includes a phone number. The site links no PDF yet.
+assets/design/
+assets/*.pdf
+
+# Interface experiments, local only
+_lab/
+
+# Not used by the page: photos cut from the gallery, the old portrait,
+# the rejected logo and an empty file. Kept locally, not published.
+colors.json
+assets/img/profile.jpg
+assets/img/video/17o1-stage.jpg
+assets/img/brand/mark.svg
+assets/img/photos/dsc00074.jpg
+assets/img/photos/dsc00223.jpg
+assets/img/photos/dsc00433.jpg
+assets/img/photos/dsc00549.jpg
+assets/img/photos/dsc00946.jpg
+assets/img/photos/dsc01027.jpg
+assets/img/photos/dsc01028.jpg
+assets/img/photos/dsc01038.jpg
+assets/img/photos/dsc01049.jpg
+assets/img/photos/dsc08216.jpg
+assets/img/photos/dsc08221.jpg
+assets/img/photos/dsc08800.jpg
+assets/img/photos/dsc09311.jpg
+assets/img/photos/dsc09371.jpg
+assets/img/photos/dsc09567.jpg
+assets/img/photos/dsc09574.jpg
+assets/img/photos/dsc09712.jpg
+
+# CV PDF: not published for now (Diego, 2026-10-21)
+assets/cv/

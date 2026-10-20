@@ -1,0 +1,624 @@
+/* ==========================================================
+   Neutral base. Type and color live in the variables below,
+   so the final choices can be swapped in one place.
+   ========================================================== */
+:root {
+  --bg: #ffffff;
+  --fg: #111111;
+  --muted: #767676;
+  --line: #e5e5e5;
+
+  --font: "Geist", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  /* Syne names things (page titles, the home index, titles of works);
+     Geist describes them (everything else) */
+  --title-font: "Syne", "Geist", "Helvetica Neue", Arial, sans-serif;
+
+  --gutter: clamp(16px, 4vw, 48px);
+  --max: 1360px;
+  --gap: clamp(8px, 1.2vw, 16px);
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 64px; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font);
+  font-size: 16px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+img { display: block; max-width: 100%; }
+[hidden] { display: none !important; }
+a { color: inherit; text-decoration: none; }
+/* Interaction follows the drawings: black and white, hard edges, inversion
+   rather than fading */
+::selection { background: var(--fg); color: var(--bg); }
+h1, h2, p { margin: 0; }
+
+.wrap {
+  width: 100%;
+  max-width: var(--max);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+/* ---------- Nav ---------- */
+.nav {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 8px 24px;
+  /* same left and right edges as the page content (.wrap) */
+  padding: 16px max(var(--gutter), calc((100% - var(--max)) / 2 + var(--gutter)));
+  background: var(--bg);
+}
+.nav-links { display: flex; flex-wrap: wrap; gap: 4px 20px; }
+.nav-links a { padding: 2px 6px; }
+.nav-links a:hover,
+.nav-links a[aria-current="page"] { background: var(--fg); color: var(--bg); }
+
+/* ---------- Home ----------
+   Name, an index of the sections, and the cover drawing (c-2). Hovering a
+   section crossfades the drawing into an image from that section. The top
+   nav and footer are hidden here. */
+[data-view="home"] .nav,
+[data-view="home"] > .footer { display: none; }
+.home {
+  min-height: 100svh;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  grid-template-rows: auto 1fr auto;
+  column-gap: var(--gutter);
+  padding-block: 16px;
+}
+.home-head { grid-column: 1 / -1; }
+.home-head h1 { font-size: 16px; font-weight: 400; }
+.home-head p { color: var(--muted); }
+.home-index {
+  grid-column: 1; grid-row: 2;
+  align-self: center;
+  display: flex; flex-direction: column; align-items: flex-start;
+  font-size: clamp(32px, 5vw, 72px);
+  line-height: 1.1;
+  white-space: nowrap;   /* "Design & Drawing" stays on one line */
+}
+.home-index a { padding: 0 .12em; margin-left: -.12em; }  /* the black block grows outward; the letters stay on the margin */
+.home-index a:hover, .home-index a:focus-visible { background: var(--fg); color: var(--bg); }
+.home-cover, .home-preview {
+  grid-column: 2; grid-row: 2;
+  align-self: center; justify-self: end;
+  max-width: 100%; max-height: 70svh;
+  object-fit: contain;
+  transition: opacity .3s ease;
+  pointer-events: none;
+}
+.home-preview { opacity: 0; }
+.home-preview.is-visible { opacity: 1; }
+.home.is-previewing .home-cover { opacity: 0; }
+.home-foot {
+  grid-column: 1 / -1;
+  display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px 24px;
+  font-size: 13px; color: var(--muted);
+}
+@media (hover: none) { .home-preview { display: none; } }
+
+/* ---------- Sections ---------- */
+.section { padding-bottom: clamp(64px, 10vw, 128px); }
+/* The black rule sits exactly halfway between the name (top left) and the
+   page title: --rule-gap above it and below it, measured to the letters */
+:root { --rule-gap: 36px; }
+.section { margin-top: calc(var(--rule-gap) - 27px); padding-top: var(--rule-gap);
+  /* the rule spans the content width only, so it starts where the name and title start */
+  background: linear-gradient(var(--fg), var(--fg)) no-repeat top center / calc(100% - 2 * var(--gutter)) 4px; }
+/* pull the title up by the space its font leaves above the capitals */
+/* Page title: same size as the home index, so each page echoes the link that led to it */
+.section-title {
+  font-size: clamp(36px, 6vw, 80px);
+  font-weight: 400;
+  line-height: 1.05;
+  margin-top: -0.175em;
+  margin-bottom: clamp(32px, 5vw, 64px);
+}
+.section[hidden] { display: none; }
+.visually-hidden {
+  position: absolute;
+  width: 1px; height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+.placeholder { color: var(--muted); }
+
+/* ---------- Writing ---------- */
+.writing-list { list-style: none; margin: 0; padding: 0; }
+.writing-list li { padding-block: 16px; border-bottom: 1px solid var(--line); }
+.writing-list li:first-child { padding-top: 0; }
+.w-title { display: inline-block; font-size: clamp(20px, 2vw, 24px); margin-bottom: 4px; }
+.w-title span { font-size: .7em; color: var(--muted); }
+.w-title:hover, .w-title:hover span { background: var(--fg); color: var(--bg); }
+.writing-list p { font-size: 14px; color: var(--muted); }
+
+/* ---------- Video ----------
+   The still is a button; clicking swaps it for the Vimeo player in place. */
+.video-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: clamp(48px, 8vw, 96px); }
+.v-frame {
+  position: relative;
+  display: block;
+  width: 100%;
+  aspect-ratio: var(--v-ar, 16 / 9);
+  padding: 0;
+  border: 0;
+  background: var(--line);
+  cursor: pointer;
+  overflow: hidden;
+}
+.v-frame img, .v-frame iframe { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; border: 0; }
+.v-play {
+  position: absolute; left: 16px; bottom: 16px;
+  padding: 6px 14px;
+  background: var(--fg); color: var(--bg);
+  font: inherit; font-size: 13px;
+}
+.v-frame:hover .v-play { background: var(--bg); color: var(--fg); }
+.v-frame:focus-visible { outline: 1px solid var(--fg); outline-offset: 4px; }
+.v-title { font-size: clamp(20px, 2vw, 24px); font-weight: 400; margin: 16px 0 4px; }
+.video p { font-size: 14px; color: var(--muted); }
+/* Vertical videos (the Instagram reel) use a narrower 9:16 frame. Once it's
+   playing, Instagram sets its own card styles inline; this only limits width. */
+.v-tall { --v-ar: 9 / 16; max-width: 400px; }
+.v-ig { max-width: 400px; }
+.v-ig .instagram-media { max-width: 100% !important; min-width: 0 !important; width: 100% !important; margin: 0 !important; }
+
+/* ---------- Design & Drawing ----------
+   A series is a title plus a uniform grid: every piece sits centred in a
+   square cell, so the set reads as a catalogue regardless of each sheet's shape. */
+/* ---------- Project menus (Video, Design) ----------
+   Each page opens on a list of its projects; a project opens on its own
+   (#project-id) with a link back. Hovering a title shows an image from it. */
+[data-panel]:not(.show-project) .project { display: none; }
+.show-project .project-index { display: none; }
+.project-index { display: flex; flex-direction: column; max-width: 60%; }
+/* Each row is a window: on hover the black block fills with an image from
+   the project and opens a little taller; the title stays on top in white */
+.project-index a {
+  position: relative; overflow: hidden;
+  display: flex; justify-content: space-between; align-items: baseline; gap: 24px;
+  padding: 14px 16px; margin: 0 -16px;
+  font-size: clamp(20px, 2.2vw, 30px);
+  line-height: 1.2;
+  transition: padding .45s cubic-bezier(.3, .1, .2, 1), color .3s;
+}
+.project-index a > span { position: relative; z-index: 2; }
+.pi-win {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  object-fit: cover; opacity: 0;
+  transition: opacity .3s ease, filter 1.1s ease;
+}
+.pi-win.raw { filter: grayscale(1) contrast(12) brightness(1.05); transition: opacity .2s ease; }
+.project-index a::after {
+  content: ""; position: absolute; inset: 0; z-index: 1;
+  background: rgba(0, 0, 0, var(--shade, .28)); opacity: 0; transition: opacity .3s;
+}
+.project-index a:hover, .project-index a:focus-visible { color: #fff; padding-top: 44px; padding-bottom: 44px; }
+.project-index a:hover .pi-win, .project-index a:focus-visible .pi-win,
+.project-index a:hover::after, .project-index a:focus-visible::after { opacity: 1; }
+.pi-year { font-size: 14px; color: var(--muted); font-variant-numeric: tabular-nums; flex: none; }
+.project-index a:hover .pi-year, .project-index a:focus-visible .pi-year { color: rgba(255, 255, 255, .8); }
+.back { display: inline-block; margin-bottom: 32px; font-size: 14px; padding: 2px 6px; margin-left: -6px; }
+.back:hover { background: var(--fg); color: var(--bg); }
+@media (max-width: 860px) {
+  .project-index { max-width: none; }
+}
+.series { scroll-margin-top: 72px; }
+.series + .series { margin-top: clamp(64px, 10vw, 128px); }
+.series-head { margin-bottom: 24px; }
+.series-head .v-title { margin-top: 0; }
+.series-head p { font-size: 14px; color: var(--muted); }
+.d-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(16px, 3vw, 48px);
+}
+.d-grid .g-item { aspect-ratio: 1; display: flex; align-items: center; justify-content: center; }
+.d-grid .g-item img { width: 100%; height: 100%; object-fit: contain; background: none; }
+
+/* ---------- Gallery (puzzle rows) ----------
+   Each row is a rectangle whose aspect ratio (--ar) is the sum of its
+   columns' ratios, so every column ends at the same height. A column is a
+   single photo or a .g-stack of two photos on top of each other, which lets
+   a vertical stand beside a stacked pair at full height. --r is a photo's
+   width/height; --h (1/--r) splits a stack's height between its photos. */
+.gallery { display: flex; flex-direction: column; gap: var(--gap); }
+.g-row { display: flex; gap: var(--gap); aspect-ratio: var(--ar); }
+.g-row > .g-item,
+.g-stack { flex: var(--r) 1 0%; min-width: 0; }
+.g-stack { display: flex; flex-direction: column; gap: var(--gap); }
+.g-stack > .g-item { flex: var(--h) 1 0%; min-height: 0; }
+.g-item {
+  margin: 0;
+  cursor: zoom-in;
+}
+.g-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  background: var(--line);
+}
+.g-item figcaption {
+  margin-top: 6px;
+  font-size: 13px;
+  color: var(--muted);
+}
+.g-item:focus-visible { outline: 1px solid var(--fg); outline-offset: 4px; }
+/* Photography captions: a small black block with number and title, shown on
+   hover (always visible in the enlarged view) so the puzzle rows stay intact */
+.gallery .g-item { position: relative; overflow: hidden; }
+.gallery .g-item figcaption {
+  position: absolute; left: 0; bottom: 0; margin: 0;
+  padding: 4px 8px;
+  background: var(--fg); color: var(--bg);
+  font-size: 13px;
+  opacity: 0; transform: translateY(4px);
+  transition: opacity .25s ease, transform .25s ease;
+  pointer-events: none;
+}
+.gallery .g-item figcaption .n { color: #999; margin-right: 6px; font-variant-numeric: tabular-nums; }
+.gallery .g-item:hover figcaption, .gallery .g-item:focus-visible figcaption { opacity: 1; transform: none; }
+@media (hover: none) { .gallery .g-item figcaption { display: none; } }
+
+/* ---------- About ---------- */
+.about-body {
+  display: grid;
+  grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+  gap: clamp(24px, 4vw, 64px);
+  align-items: start;
+}
+.about-photo { width: 100%; height: auto; }
+/* The portrait waits in black and white and takes on its colour on hover,
+   the same gesture as the Design menu (touch screens show it in colour) */
+.about-photo { filter: grayscale(1) contrast(1.1); transition: filter .8s ease; }
+.about-photo:hover { filter: none; }
+@media (hover: none) { .about-photo { filter: none; } }
+.about-text p { max-width: 52ch; }
+.contact { list-style: none; margin: 32px 0 0; padding: 0; }
+
+/* ---------- Footer ---------- */
+/* Same footer on every page: contact on the left, the copyright set
+   smaller and lower, in the bottom-right corner */
+.footer {
+  display: flex; justify-content: space-between; align-items: flex-end; gap: 16px 32px; flex-wrap: wrap;
+  padding-top: clamp(48px, 8vw, 96px);
+  padding-bottom: 14px;
+  font-size: 13px;
+  color: var(--muted);
+}
+.footer-links { list-style: none; margin: 0 0 18px; padding: 0; display: flex; gap: 4px 20px; flex-wrap: wrap; }
+.footer-links a { padding: 1px 4px; margin-left: -4px; }
+.footer-links a:hover { background: var(--fg); color: var(--bg); }
+.footer-copy { font-size: 11px; color: #9a9a9a; }
+
+/* ---------- Lightbox ---------- */
+.lightbox {
+  position: fixed; inset: 0; z-index: 100;
+  background: #000;
+  display: flex; align-items: center; justify-content: center;
+  padding: 56px clamp(8px, 6vw, 96px);
+}
+.lightbox[hidden] { display: none; }
+.lightbox figure { margin: 0; display: flex; flex-direction: column; align-items: center; gap: 12px; max-height: 100%; }
+.lightbox img { max-width: 100%; max-height: calc(100svh - 140px); object-fit: contain; }
+.lightbox figcaption { font-size: 13px; color: #fff; }
+.lb-btn {
+  position: absolute;
+  background: none; border: 0;
+  color: #fff;
+  font: inherit; font-size: 24px; line-height: 1;
+  width: 48px; height: 48px;
+  cursor: pointer;
+}
+.lb-btn:hover { background: #333; }
+.lb-close { top: 8px; right: 8px; font-size: 32px; }
+.lb-prev { left: 8px; top: 50%; transform: translateY(-50%); }
+.lb-next { right: 8px; top: 50%; transform: translateY(-50%); }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 640px) {
+  .d-grid { grid-template-columns: 1fr; }
+  .home { grid-template-columns: 1fr; grid-template-rows: auto auto auto auto; row-gap: 40px; }
+  .home-preview { display: none; }
+  .home-cover { grid-column: 1; grid-row: 3; justify-self: start; max-height: none; }
+  .home-foot { grid-row: 4; }
+  .g-row { flex-direction: column; aspect-ratio: auto; }
+  .g-row > .g-item, .g-stack, .g-stack > .g-item { flex: none; }
+  .g-item img { height: auto; aspect-ratio: var(--r); }
+  .about-body { grid-template-columns: 1fr; }
+}
+
+/* ---------- CV (inside About) ---------- */
+.cv { margin-top: clamp(48px, 8vw, 96px); max-width: 860px; }
+.cv h3 { font-size: 14px; font-weight: 400; color: var(--muted); margin: 32px 0 8px; }
+.cv h3:first-child { margin-top: 0; }
+.cv dl { margin: 0; }
+.cv dl div { display: grid; grid-template-columns: 96px 1fr; gap: 16px; padding: 8px 0; border-top: 1px solid var(--line); }
+.cv dt { color: var(--muted); font-variant-numeric: tabular-nums; }
+.cv dd { margin: 0; }
+
+/* ---------- Booklet flipbook ----------
+   Each .fb-leaf is a sheet hinged at the spine (the book's centre): its front
+   face is a right-hand page, its back face the next left-hand page. Turning a
+   leaf rotates it 180deg around the spine. Closed, the book slides so the
+   cover sits centred; at the end, the back cover does. */
+.series-head .series-desc { max-width: 62ch; margin-top: 12px; color: var(--fg); font-size: 16px; }
+.flipbook {
+  position: relative;
+  max-width: 1100px;
+  margin: 0 auto;
+  aspect-ratio: 2400 / 1854;   /* one open spread */
+  cursor: pointer;
+  outline-offset: 12px;
+}
+/* perspective must sit on the leaves' direct parent for the turn to read as 3D */
+.fb-book { position: absolute; inset: 0; perspective: 2600px; transition: transform .7s cubic-bezier(.3, .1, .3, 1); }
+/* One shadow under the whole paper block, sized to what's showing: the right
+   page when closed on the front, the left when closed on the back. (A shadow
+   per page would stack six deep into a grey halo.) */
+.fb-book::before {
+  content: ""; position: absolute; top: 0; bottom: 0; left: 0; right: 0;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, .14);
+  transition: left .7s cubic-bezier(.3, .1, .3, 1), right .7s cubic-bezier(.3, .1, .3, 1);
+}
+.flipbook.at-front .fb-book::before { left: 50%; }
+.flipbook.at-back .fb-book::before { right: 50%; }
+.flipbook.at-front .fb-book { transform: translateX(-25%); }
+.flipbook.at-back .fb-book { transform: translateX(25%); }
+.fb-leaf {
+  position: absolute; top: 0; left: 50%;
+  width: 50%; height: 100%;
+  transform-origin: left center;
+  transform-style: preserve-3d;
+  transition: transform .9s cubic-bezier(.3, .1, .3, 1);
+}
+.fb-leaf.is-flipped { transform: rotateY(-180deg); }
+.fb-leaf.is-turning { z-index: 100 !important; }
+.fb-face {
+  position: absolute; inset: 0;
+  overflow: hidden;
+  background: #fff;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+.fb-back { transform: rotateY(180deg); }
+.fb-face img { width: 100%; height: 100%; object-fit: cover; }
+/* A soft shadow along the spine, as where paper curves into the fold */
+.fb-face::after { content: ""; position: absolute; inset: 0; pointer-events: none; }
+.fb-front::after { background: linear-gradient(90deg, rgba(0, 0, 0, .12), rgba(0, 0, 0, 0) 5%); }
+.fb-back::after { background: linear-gradient(270deg, rgba(0, 0, 0, .12), rgba(0, 0, 0, 0) 5%); }
+/* The covers face outward, so they get no spine shading */
+.fb-leaf:first-child .fb-front::after,
+.fb-leaf:last-child .fb-back::after { display: none; }
+.fb-controls {
+  display: flex; justify-content: center; align-items: center; gap: 24px;
+  margin-top: 28px;
+  font-size: 14px;
+}
+.fb-controls button {
+  font: inherit; color: var(--fg);
+  background: none; border: 0;
+  padding: 2px 6px;
+  cursor: pointer;
+}
+.fb-controls button:hover:not(:disabled) { background: var(--fg); color: var(--bg); }
+.fb-controls button:disabled { color: var(--line); cursor: default; }
+.fb-status { min-width: 9em; text-align: center; color: var(--muted); font-variant-numeric: tabular-nums; }
+@media (prefers-reduced-motion: reduce) {
+  .fb-book, .fb-leaf { transition: none; }
+}
+/* Focus ring only for keyboard use, not after clicking the booklet */
+.flipbook:focus { outline: none; }
+.flipbook:focus-visible { outline: 1px solid var(--fg); }
+
+/* Two pieces side by side at their natural shape (Library Drawers) */
+.pair { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(16px, 3vw, 48px); align-items: start; }
+.pair .g-item img { height: auto; background: none; box-shadow: 0 6px 24px rgba(0, 0, 0, .08); }
+.pair figcaption { margin-top: 8px; font-size: 13px; color: var(--muted); }
+@media (max-width: 640px) { .pair { grid-template-columns: 1fr; } }
+
+/* ---------- Library Drawers ----------
+   The poster as large as the screen allows, then the alphabet letter by letter */
+.poster-hero { display: flex; justify-content: center; margin: 0 0 clamp(64px, 10vw, 128px); }
+.poster-hero img { width: auto; max-width: 100%; max-height: 92svh; box-shadow: 0 10px 40px rgba(0, 0, 0, .12); }
+.sub-head { font-size: 14px; font-weight: 400; color: var(--muted); margin: 0 0 16px; }
+.letters { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: clamp(6px, 1vw, 12px); }
+.letters .g-item img { width: 100%; aspect-ratio: 9 / 10; height: auto; object-fit: cover; }
+@media (max-width: 640px) { .letters { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.cv-download { display: inline-block; margin-top: 32px; padding: 2px 6px; margin-left: -6px; }
+.cv-download:hover { background: var(--fg); color: var(--bg); }
+/* Library Drawers: the text sits between the poster and the alphabet */
+.after-poster { max-width: 62ch; margin: 0 0 clamp(48px, 8vw, 96px); font-size: 16px; }
+.letters + .sub-head { margin-top: clamp(40px, 6vw, 72px); }
+.numbers { grid-template-columns: repeat(5, minmax(0, 1fr)); max-width: calc(5 / 6 * 100%); }
+@media (max-width: 640px) { .numbers { grid-template-columns: repeat(3, minmax(0, 1fr)); max-width: none; } }
+.gallery .g-item figcaption .y { color: #bbb; }
+/* On short pages the footer still sits at the bottom of the screen */
+body { display: flex; flex-direction: column; min-height: 100svh; }
+body > main { flex: 1 0 auto; }
+.home-foot.footer { padding-top: 0; padding-bottom: 0; }
+.home-foot .footer-links { margin-bottom: 4px; }
+
+/* ---------- Running text ----------
+   Prose is justified and kept to less than half the page, so lines don't
+   stretch; hyphenation keeps justified lines from opening gaps */
+.series-head .series-desc, .after-poster, .about-text p {
+  text-align: justify;
+  hyphens: auto; -webkit-hyphens: auto;
+  max-width: min(46%, 60ch);
+}
+.about-text p { max-width: 60ch; }
+@media (max-width: 860px) { .series-head .series-desc, .after-poster { max-width: none; } }
+
+/* ---------- Title typeface (level B) ---------- */
+.home-index, .section-title, .project-index a > span:first-of-type, .w-title, .v-title {
+  font-family: var(--title-font);
+}
+/* Syne's descenders (the g) reach below its line box: give the black
+   hover block room underneath so the tail isn't lost against the white */
+.home-index a { padding-bottom: .08em; }
+
+/* ---------- Writing ----------
+   The same window rows as Video and Design, without the dividing lines,
+   with the publication details under each title (in Geist) */
+.pi-plain a, .pi-plain a:last-child { border: 0; }
+.pi-meta { display: block; margin-top: 4px; font-family: var(--font); font-size: 13px; line-height: 1.45; color: var(--muted); }
+.pi-meta:first-of-type { margin-top: 8px; }
+.pi-ext { font-size: .6em; color: var(--muted); vertical-align: .25em; }
+.pi-credit { display: none; }
+.project-index a:hover .pi-meta, .project-index a:focus-visible .pi-meta,
+.project-index a:hover .pi-ext { color: rgba(255, 255, 255, .85); }
+.project-index a:hover .pi-credit, .project-index a:focus-visible .pi-credit { display: block; }
+.writing-index a { padding-top: 18px; padding-bottom: 18px; }
+/* Rows without an image fall back to the plain black block */
+.project-index a:not([data-win]):hover, .project-index a:not([data-win]):focus-visible { background: var(--fg); }
+
+/* Year inline after the title, small and gray */
+.project-index a > span .pi-year { margin-left: .5em; font-family: var(--font); font-size: 14px; vertical-align: .2em; }
+
+/* A small label for a second group in a menu (Video: Commissions) */
+.pi-group { margin: clamp(48px, 7vw, 88px) 0 8px; font-size: 14px; color: var(--muted); }
+.show-project .pi-group { display: none; }
+/* A video's concept text: body copy, justified, under the detail lines */
+.video .v-desc { margin-top: 16px; font-size: 16px; color: var(--fg); text-align: justify; hyphens: auto; -webkit-hyphens: auto; max-width: min(46%, 60ch); }
+@media (max-width: 860px) { .video .v-desc { max-width: none; } }
+
+/* ---------- Library Drawers: text left, poster right ---------- */
+.ld-top { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: clamp(32px, 5vw, 80px); align-items: start; margin-bottom: clamp(72px, 10vw, 140px); }
+.ld-top .series-head { margin: 0; }
+.ld-top .series-head .series-desc { max-width: 52ch; }
+.ld-poster { margin: 0; }
+.ld-poster img { height: calc(100svh - 230px); min-height: 520px; width: auto; max-width: 100%; box-shadow: 0 10px 40px rgba(0, 0, 0, .12); }
+@media (max-width: 860px) {
+  .ld-top { grid-template-columns: 1fr; }
+  .ld-poster img { height: auto; width: 100%; }
+}
+/* inside a project the page title and back link are smaller, so the work comes up */
+.show-project .section-title { font-size: clamp(22px, 2.4vw, 32px); margin-bottom: 20px; }
+.show-project .back { margin-bottom: 20px; }
+.ld-top { position: relative; }
+.ld-poster { position: sticky; top: 72px; }
+/* Library Drawers, larger: the poster rises to the back link and fills the
+   height of the screen; the details share the measure of the text below */
+.ld-top { grid-template-columns: minmax(0, 52ch) 1fr; }
+.ld-top .series-head > * { max-width: 52ch; }
+.ld-poster { justify-self: end; margin-top: -52px; }
+.ld-poster img { height: calc(100svh - 150px); min-height: 560px; }
+@media (max-width: 860px) { .ld-poster { margin-top: 0; justify-self: stretch; } }
+/* one shared measure for the details and the justified text */
+.ld-top { grid-template-columns: minmax(0, 440px) 1fr; }
+.ld-top .series-head > *, .ld-top .series-head .series-desc { max-width: none; }
+/* Library Drawers, centred: text and poster form one group in the middle of
+   the page, the poster as tall as the screen allows */
+.ld-top { grid-template-columns: minmax(0, 400px) auto; justify-content: center; column-gap: clamp(40px, 6vw, 96px); }
+.ld-top .series-head { align-self: center; }
+.ld-poster { justify-self: start; }
+.ld-poster img { height: calc(100svh - 170px); }
+
+/* No hyphenation in justified text; wrap lines evenly instead */
+.series-head .series-desc, .after-poster, .about-text p, .video .v-desc {
+  hyphens: manual; -webkit-hyphens: manual; text-wrap: pretty; word-spacing: -.02em;
+}
+/* Library Drawers (rev.): text stays on the left margin; the poster rises to
+   the top of the content and sits centred in the space beside the text */
+.ld-top { grid-template-columns: minmax(0, 400px) 1fr; justify-content: normal; }
+.ld-top .series-head { align-self: start; }
+.ld-poster { justify-self: center; margin-top: -95px; }
+.ld-poster img { height: calc(100svh - 125px); }
+.pi-gap { height: clamp(48px, 7vw, 88px); }
+.show-project .pi-gap { display: none; }
+
+/* ---------- Booklet: beside the text, opening over it ---------- */
+.bk-top { position: relative; }
+.bk-top .series-head { position: absolute; left: 0; top: 0; width: 400px; z-index: 2; margin: 0; transition: opacity .5s ease; }
+.bk-top .series-head > *, .bk-top .series-head .series-desc { max-width: none; }
+
+.bk-top .flipbook { width: min(100%, calc((100svh - 190px) * 2400 / 1854)); margin: -40px 0 0 auto; }
+/* closed on the front cover the book stays put: the cover is its right half */
+.bk-top .flipbook.at-front .fb-book { transform: none; }
+.bk-top .flipbook.at-front .fb-book::before { left: 50%; }
+.bk-top .fb-controls { justify-content: flex-end; padding-right: calc(min(100%, (100svh - 190px) * 2400 / 1854) / 4 - 4.5em); }
+@media (max-width: 860px) {
+  .bk-top .series-head { position: static; width: auto; margin-bottom: 24px; }
+  .bk-top.is-open .series-head { opacity: 1; }
+  .bk-top .flipbook { margin: 0 auto; }
+  .bk-top .flipbook.at-front .fb-book { transform: translateX(-25%); }
+  .bk-top .fb-controls { justify-content: center; padding-right: 0; }
+}
+/* lift the book without its negative margin collapsing out of the wrapper */
+.bk-top .flipbook { margin-top: 0; top: -40px; }
+.bk-top .fb-controls { margin-top: -12px; }
+.show-project .series { margin-top: 0; }
+/* Booklet controls: "About this project" and "Close" appear once it's open */
+.fb-extra { display: none; gap: 8px; margin-left: 24px; }
+.bk-top.is-open .fb-controls .fb-extra { display: inline-flex; }
+.fb-controls .fb-about[aria-pressed="true"] { background: var(--fg); color: var(--bg); }
+.bk-top.is-open.show-text .series-head {
+  opacity: 1; pointer-events: auto;
+  background: var(--bg); padding: 24px; margin: -24px 0 0 -24px; width: 448px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, .15);
+  z-index: 200;
+}
+/* Open booklet: the text drops below the spread instead of disappearing */
+.bk-top.text-below { display: flex; flex-direction: column; }
+.bk-top.text-below .series-head {
+  position: static; order: 2; opacity: 1; pointer-events: auto;
+  width: auto; max-width: 440px; margin: 72px 0 0; padding: 0;
+  background: none; box-shadow: none;
+}
+.bk-top.is-open .fb-controls { order: 1; }
+.bk-top.text-below .series-head { order: 3; }
+.bk-top.text-below .fb-controls { order: 2; }
+/* The text fades out, changes place (beside the cover / below the spread)
+   while invisible, then fades back in */
+.bk-top .series-head { transition: opacity .45s ease; }
+.bk-top.text-fading .series-head { opacity: 0; }
+
+/* ---------- Exercises: a looser grid ----------
+   Twelve columns; each drawing spans its own width (--span) at its natural
+   shape, so sizes vary and the rows don't line up into a rigid table */
+.d-free { grid-template-columns: repeat(12, minmax(0, 1fr)); align-items: start; gap: clamp(20px, 3vw, 48px); }
+.d-free .g-item { grid-column: span var(--span, 4); aspect-ratio: auto; display: block; }
+.d-free .g-item img { height: auto; }
+@media (max-width: 640px) { .d-free .g-item { grid-column: span 12; } }
+/* Exercises as a mosaic, like Photography: rows share a height, drawings keep their shape */
+.d-mosaic { gap: clamp(16px, 2.4vw, 36px); }
+.d-mosaic .g-row { gap: clamp(16px, 2.4vw, 36px); }
+.d-mosaic .g-item img { object-fit: contain; background: none; }
+
+/* ---------- About: full-screen portrait, text on the sky ---------- */
+.about-hero { display: block; position: relative; width: 100vw; margin-left: calc(50% - 50vw); height: calc(100svh - 60px); overflow: hidden; }
+.about-hero .about-photo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 35%; }
+.about-hero .about-text { position: absolute; top: clamp(32px, 6vh, 72px); left: max(var(--gutter), calc((100vw - var(--max)) / 2 + var(--gutter))); max-width: min(46ch, 44vw); color: #111; pointer-events: none; }
+.about-hero .about-text p { max-width: none; font-size: clamp(15px, 1.3vw, 18px); line-height: 1.5; }
+.about .cv { margin-top: clamp(56px, 8vw, 104px); }
+@media (max-width: 860px) {
+  .about-hero { height: auto; width: auto; margin-left: 0; overflow: visible; }
+  .about-hero .about-photo { position: static; height: auto; }
+  .about-hero .about-text { position: static; max-width: none; margin-top: 24px; }
+}
+.d-mosaic .g-narrow { width: 64%; margin-inline: auto; }
+/* About (rev.): the portrait stays black and white; the bio is set in the
+   title face, larger, so it speaks with the site's voice */
+.about-hero .about-photo, .about-hero .about-photo:hover { filter: grayscale(1) contrast(1.1); }
+.about-hero .about-text { max-width: min(30ch, 46vw); }
+.about-hero .about-text p { font-family: var(--title-font); font-size: clamp(18px, 1.75vw, 25px); line-height: 1.38; text-align: left; }
+@media (hover: none) { .about-hero .about-photo { filter: grayscale(1) contrast(1.1); } }
+.about-hero .about-text { max-width: min(54ch, 48vw); }
+.about-hero .about-text p { font-size: clamp(16px, 1.4vw, 20px); line-height: 1.4; }
