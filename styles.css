@@ -622,3 +622,67 @@ body > main { flex: 1 0 auto; }
 @media (hover: none) { .about-hero .about-photo { filter: grayscale(1) contrast(1.1); } }
 .about-hero .about-text { max-width: min(54ch, 48vw); }
 .about-hero .about-text p { font-size: clamp(16px, 1.4vw, 20px); line-height: 1.4; }
+
+/* ==========================================================
+   Phone (≤ 760px). Kept last on purpose: several desktop rules above were
+   added after their own mobile overrides and were cancelling them.
+   ========================================================== */
+@media (max-width: 760px) {
+  /* Library Drawers: text, then the poster full width */
+  .ld-top { grid-template-columns: 1fr; row-gap: 32px; }
+  .ld-top .series-head, .ld-top .series-head > *, .ld-top .series-head .series-desc { max-width: none; }
+  .ld-poster { position: static; margin-top: 0; justify-self: stretch; }
+  .ld-poster img { width: 100%; height: auto; min-height: 0; }
+  /* Booklet: text above, the book full width, cover centred */
+  .bk-top .series-head { position: static; width: auto; margin: 0 0 24px; }
+  .bk-top.is-open .series-head, .bk-top.text-below .series-head { opacity: 1; }
+  .bk-top .flipbook { width: 100%; top: 0; margin: 0; }
+  .bk-top .flipbook.at-front .fb-book { transform: translateX(-25%); }
+  .bk-top .flipbook.at-back .fb-book { transform: translateX(25%); }
+  .bk-top .fb-controls { justify-content: center; padding-right: 0; flex-wrap: wrap; gap: 8px 16px; }
+  /* Project text and menus use the full width */
+  .series-head .series-desc, .after-poster, .video .v-desc { max-width: none; }
+  .project-index { max-width: none; }
+  .show-project .section-title { font-size: 22px; }
+  /* About: photo, then the bio, then the CV */
+  .about-hero { height: auto; width: auto; margin-left: 0; overflow: visible; }
+  .about-hero .about-photo { position: static; width: 100%; height: auto; }
+  .about-hero .about-text { position: static; max-width: none; margin-top: 20px; pointer-events: auto; }
+  .cv dl div { grid-template-columns: 72px 1fr; }
+  /* Mosaics stack one image per row */
+  .gallery .g-row, .d-mosaic .g-row { flex-direction: column; aspect-ratio: auto; }
+  .gallery .g-row > .g-item, .gallery .g-stack, .gallery .g-stack > .g-item { flex: none; width: 100%; }
+  .gallery .g-item img { height: auto; aspect-ratio: var(--r); }
+  .d-mosaic .g-narrow { width: 100%; }
+  /* Video frames */
+  .v-tall { max-width: 100%; }
+  .bk-top .fb-controls { margin-top: 20px; }
+  /* Work first: the project title, then the work, then its text.
+     The header's children are lifted into the parent (display: contents)
+     so they can be reordered around the work. */
+  .ld-top, .bk-top { display: flex; flex-direction: column; row-gap: 0; }
+  .ld-top .series-head > p, .bk-top .series-head > p { margin-bottom: 0; }
+  .ld-top { margin-bottom: 56px; }
+  .ld-top > .series-head, .bk-top > .series-head { display: contents; }
+  .ld-top .v-title, .bk-top .v-title { order: 0; margin-bottom: 16px; }
+  .ld-poster { order: 1; }
+  .bk-top .flipbook { order: 1; }
+  .bk-top .fb-controls { order: 2; }
+  .ld-top .series-head > p { order: 2; }
+  .bk-top .series-head > p { order: 3; }
+  .ld-top .series-head > p:first-of-type, .bk-top .series-head > p:first-of-type { margin-top: 28px; }
+  /* Exercises: title, the first two rows of drawings, the text, then the rest */
+  [data-project="exercises-in-visual-abstraction"] { display: flex; flex-direction: column; }
+  [data-project="exercises-in-visual-abstraction"] > .series-head,
+  [data-project="exercises-in-visual-abstraction"] > .d-mosaic { display: contents; }
+  [data-project="exercises-in-visual-abstraction"] .v-title { order: 0; margin-bottom: 16px; }
+  [data-project="exercises-in-visual-abstraction"] .g-row { order: 3; margin-bottom: clamp(16px, 2.4vw, 36px); }
+  [data-project="exercises-in-visual-abstraction"] .g-row:nth-child(-n+2) { order: 1; }
+  [data-project="exercises-in-visual-abstraction"] .series-head > p { order: 2; }
+  [data-project="exercises-in-visual-abstraction"] .series-head > p:first-of-type { margin-top: 8px; }
+  [data-project="exercises-in-visual-abstraction"] .series-head > p:last-of-type { margin-bottom: 32px; }
+  /* Top menu fits on one line */
+  .nav { gap: 6px 16px; }
+  .nav-links { gap: 2px 6px; font-size: 14px; }
+  .nav-links a { padding: 2px 4px; }
+}
